@@ -1,0 +1,11 @@
+nextflow
+pandas
+numpy
+plotly
+matplotlib
+scipy
+biopython
+leuci-xyz
+leuci-geo
+leuci-pol
+leuci-map
