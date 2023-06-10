@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 
 params.pdbs = ['5i9s', '5k7o', '5k7r', '5k7s', '6cl7', '6lav', '6law', '6pkp', '6pkq', '6pkr', '6pkt', '6s2n', '6v8r', '7jsy', '7mrp', '7skw', '7skx', '7sw1', '7sw2', '7sw5', '7sw6', '7sw8', '7uly']
+//params.pdbs = ['6law']
 params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
 params.outdir = "results"
 
@@ -24,7 +25,7 @@ process SLICES2D {
     val pdb
          
     output:
-    path "2d_*.npy"
+    path "2d_*.npy" optional true
          
     script:    
     """
@@ -38,7 +39,7 @@ process SLICES3D {
     val pdb
          
     output:
-    path "3d_*.npy"
+    path "3d_*.npy" optional true
          
     script:    
     """
@@ -52,7 +53,7 @@ process IMAGES2D {
     val pdb
              
     output:
-    path "2d_*.html"
+    path "2d_*.html" optional true
          
     script:    
     """
@@ -66,7 +67,7 @@ process IMAGES3D {
     val pdb
          
     output:
-    path "3d_*.html"
+    path "3d_*.html" optional true
          
     script:    
     """
@@ -81,7 +82,7 @@ process OVERLAY2D{
     val mat_dir
      
     output:
-    path 'image_overlay_2d.*'
+    path 'image_overlay_2d.*' optional true
      
     script:     
     """     
@@ -96,7 +97,7 @@ process OVERLAY3D{
     val mat_dir
      
     output:
-    path 'image_overlay_3d.*'
+    path 'image_overlay_3d.*' optional true
      
     script:     
     """     
