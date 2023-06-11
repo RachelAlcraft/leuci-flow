@@ -162,7 +162,8 @@ cython_debug/
 # ignore logs and cache
 .nextflow/*
 trace*.txt
-pdbdata/*.*
+pdbdata/*.pdb*
+pdbdata/*.ccp4*
 .nextflow.*
 results/*.*
 work/*.*
