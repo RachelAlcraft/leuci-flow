@@ -7,5 +7,5 @@ chmod +x bin/slices.py
 
 ## Simply
 ```
-nextflow run nf_overlay.nf -resume --cpus 3
+nextflow run nf_overlay.nf -resume --process.cpus 2 --process.processes 2
 ```

@@ -14,6 +14,7 @@ import numpy as np
 def data(args): 
     pdb_path = args[1]
     PDBDIR = f"{args[2]}/"    
+    tag = args[3]   
     pdb = ""
     with open(pdb_path,"r") as r:
         pdb = r.read()        
@@ -26,7 +27,7 @@ def data(args):
     print("----- filter -----")    
     df = df.loc[(df['occ_SG:{(N),(O)}:{SG@1}'] == 1) ]
     #file_outputcsv = f"sg_csv_{pdb}.csv"
-    file_outputcsv = f"data.csv"
+    file_outputcsv = f"data_{tag}_{pdb}.csv"
     df["KEY"] = 'info_SG:{(N),(O)}:{SG@1}'
     df.to_csv(file_outputcsv)
 

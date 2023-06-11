@@ -20,15 +20,16 @@ process EXISTS {
 }
 
 process DATA {        
+    publishDir params.outdir, mode:'copy'
     input:
     path pdb_exists
          
     output:
-    path "data.csv" optional true
+    path "data*.csv" optional true
          
     script:    
     """
-    data.py $pdb_exists $params.pdbdir
+    data.py $pdb_exists $params.pdbdir $params.set_tag
     """    
 }
 
@@ -145,16 +146,18 @@ workflow {
     
     mat_ch = Channel.fromPath(params.outdir)
 
-    slices2_ch = SLICES2D(data_ch)                
-    OVERLAY2D(slices2_ch.collect().flatten(),mat_ch)
+    //slices2_ch = SLICES2D(data_ch)                
+    //OVERLAY2D(slices2_ch.collect().flatten(),mat_ch)
                         
     slices3_ch = SLICES3D(data_ch)
     OVERLAY3D(slices3_ch.collect().flatten(),mat_ch)
-    
-    //images2_ch = IMAGES2D(data_ch)
-    images2_ch = IMAGES2D_NAY(data_ch)
+        
+    // This is very slow but very useful
+    //images2_ch = IMAGES2D_NAY(data_ch)
                 
-    images3_ch = IMAGES3D(data_ch)        
+    // Optional but unlikely - neighbours better and 3d for every image just too much data
+    //images2_ch = IMAGES2D(data_ch)
+    //images3_ch = IMAGES3D(data_ch)        
     
     
 }
