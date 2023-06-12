@@ -2,8 +2,8 @@
 
 //#################################################################
 params.set_tag = "small"
-params.filter = "PI"
 params.pdb_file = './inputs/set_tag_small.csv'
+params.filter = "PI"
 params.pdbdir = "~/git/leuci-flow/pdbdata"
 //params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
 //params.pdbdir = "/workspace/leuci-flow/pdbdata"
