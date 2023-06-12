@@ -4,9 +4,9 @@
 params.set_tag = "small"
 params.pdb_file = './inputs/set_tag_small.csv'
 params.filter = "PI"
-params.pdbdir = "~/git/leuci-flow/pdbdata"
+//params.pdbdir = "~/git/leuci-flow/pdbdata"
 //params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
-//params.pdbdir = "/workspace/leuci-flow/pdbdata"
+params.pdbdir = "/workspaces/leuci-flow/pdbdata"
 //params.pdbdir = "/home/ralcraft/phd/leuci-flow/pdbdata"
 params.outdir = "results"
 params.outcsv = "results_csv"
