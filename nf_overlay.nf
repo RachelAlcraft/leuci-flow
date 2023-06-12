@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 params.set_tag = "xray"
-params.pdb_file = './pdbdata/set_tag_xray.csv'
+params.pdb_file = './inuts/set_tag_xray.csv'
 
 params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
 params.outdir = "results"
