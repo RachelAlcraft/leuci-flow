@@ -4,7 +4,7 @@
 params.set_tag = "small"
 params.filter = "PI"
 params.pdb_file = './inputs/set_tag_small.csv'
-params.pdbdir = "/home/git/leuci-flow/pdbdata"
+params.pdbdir = "~/git/leuci-flow/pdbdata"
 //params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
 //params.pdbdir = "/workspace/leuci-flow/pdbdata"
 //params.pdbdir = "/home/ralcraft/phd/leuci-flow/pdbdata"
@@ -16,6 +16,7 @@ params.outhtml = "results_html"
 // Processes to include from the shared module
 include { EXISTS } from './nf_processes'
 include { DATA } from './nf_processes'
+include { DATA_ALL } from './nf_processes'
 include { SLICES2D } from './nf_processes'
 include { SLICES3D } from './nf_processes'
 include { OVERLAY2D } from './nf_processes'
@@ -34,6 +35,8 @@ workflow {
     pdbs_ch = EXISTS(pdbs0_ch.flatten())
     
     data_ch = DATA(pdbs_ch.flatten()).flatten()
+
+    DATA_ALL(data_ch.collect())
     
     mat_ch = Channel.fromPath(params.outnpy)
 
@@ -43,10 +46,10 @@ workflow {
     slices3_ch = SLICES3D(data_ch)
     OVERLAY3D(slices3_ch.collect().flatten(),mat_ch)
         
-    // This is very slow but very useful
+    // ### This is very slow but very useful
     images2_ch = IMAGES2D_NAY(data_ch)
                 
-    // Optional but unlikely - neighbours better and 3d for every image just too much data
+    // ### Optional but unlikely - neighbours better and 3d for every image just too much data
     //images2_ch = IMAGES2D(data_ch)
     //images3_ch = IMAGES3D(data_ch)                
 }

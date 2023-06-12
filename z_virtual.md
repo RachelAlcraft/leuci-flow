@@ -19,3 +19,17 @@ ssh -i ~/.ssh/rae-flow.pem ralcraft@52.157.153.72
 ```
 git clone git@github.com:RachelAlcraft/leuci-flow.git
 ```
+
+## install python
+sudo apt-get update
+sudo apt-get install python3-virtualenv
+sudo apt install python3.10-venv
+
+## install java
+sudo apt-get update
+sudo apt install default-jdk
+java -version
+
+python nf_clean.py
+git checkout -- .
+git pull

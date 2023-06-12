@@ -12,6 +12,11 @@ dirs = ["results","results_csv","results_html","results_npy","work"]
 
 make,clean = True,True
 
+try:
+    os.mkdir("pdbdata")
+except:
+    pass
+
 if make:
     for dir in dirs:
         try:

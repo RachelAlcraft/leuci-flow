@@ -28,8 +28,7 @@ process EXISTS {
     """    
 }
 
-process DATA {        
-    publishDir params.outcsv, mode:'copy'
+process DATA {            
     input:
     path pdb_exists
          
@@ -39,6 +38,20 @@ process DATA {
     script:    
     """
     data.py $pdb_exists $params.pdbdir $params.set_tag $params.filter
+    """    
+}
+
+process DATA_ALL {        
+    publishDir params.outcsv, mode:'copy'
+    input:
+    path pdb_csvs
+         
+    output:
+    path "all_data*.csv" optional true
+         
+    script:    
+    """
+    alldata.py $params.outcsv $params.set_tag $params.filter $pdb_csvs
     """    
 }
 
