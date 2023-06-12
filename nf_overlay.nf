@@ -1,9 +1,11 @@
 #!/usr/bin/env nextflow
 
-params.set_tag = "xray"
-params.pdb_file = './inuts/set_tag_xray.csv'
+params.set_tag = "em"
+params.pdb_file = './inputs/set_tag_em.csv'
 
 params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
+//params.pdbdir = "/home/ralcraft/phd/leuci-flow/pdbdata"
+
 params.outdir = "results"
 
 process EXISTS {        
@@ -142,11 +144,11 @@ workflow {
                 | splitCsv(header:true,sep:",") \
                 | map{row->tuple(row.pdbs)}                     
     pdbs_ch = EXISTS(pdbs0_ch.flatten())
-    //data_ch = DATA(pdbs_ch.flatten())    
+    data_ch = DATA(pdbs_ch.flatten())    
     
-    //mat_ch = Channel.fromPath(params.outdir)
+    mat_ch = Channel.fromPath(params.outdir)
 
-    //slices2_ch = SLICES2D(data_ch)                
+    slices2_ch = SLICES2D(data_ch)                
     //OVERLAY2D(slices2_ch.collect().flatten(),mat_ch)
                         
     //slices3_ch = SLICES3D(data_ch)

@@ -14,13 +14,15 @@ import bin.overlay as bo
 #bo.overlay(["","/home/rachel/phd/leuci-async/leuci-flow/results","2d","small"])
 
 if True:
-     with open("inputs/set_tag_ec.csv","r") as r:
-        pdbs = r.readlines()
-        for i in range(1,len(pdbs)):
-            pdb = pdbs[i].strip()
-            if len(pdb) == 4:
-                print("fetching",pdb)
-                be.exists(["", pdb, "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"])
+    tags = ["small","ec","em","xray"]
+    for tag in tags:
+        with open("inputs/set_tag_xray.csv","r") as r:
+            pdbs = r.readlines()
+            for i in range(1,len(pdbs)):
+                pdb = pdbs[i].strip()
+                if len(pdb) == 4:
+                    print("####",i,"/",len(pdbs),"fetching",pdb,"####")
+                    be.exists(["", pdb, "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"])
 
 
 
