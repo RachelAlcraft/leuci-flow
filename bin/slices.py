@@ -29,12 +29,10 @@ def slices(args):
     df_len = len(df.index)    
     for i, row in df.iterrows():
         pdb = row['pdb_code']
-        atom_key = row['KEY']
+        atoms = row['KEY']
         print("Loading",pdb)
         pla = pl.PdbLoader(pdb,PDBDIR,cif=False)    
         po = pla.load_pdb()
-
-        atoms = row[atom_key]
         print(i_count, "/",df_len,i,atoms)
         i_count += 1
         clp = atoms.split("(")    
@@ -69,7 +67,7 @@ def slices(args):
                 cc = v3.VectorThree().from_coords(ml.pobj.get_coords_key(cen))
                 ll = v3.VectorThree().from_coords(ml.pobj.get_coords_key(lin))
                 pp = v3.VectorThree().from_coords(ml.pobj.get_coords_key(pla))            
-                title_key = f"{pdb}_{cen_str}_{lin_str}_{pla_str}"
+                title_key = f"{pdb}_{atoms}"
                 if "2d" in d2or3:
                     vals2d = mf.get_slice(cc,ll,pp,width,samples,interpolation,deriv=0,ret_type="3d")
                     if d2or3 == "2d_np":

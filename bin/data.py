@@ -28,7 +28,7 @@ def data(args):
     df = df.loc[(df['occ_SG:{(N),(O)}:{SG@1}'] == 1) ]
     #file_outputcsv = f"sg_csv_{pdb}.csv"
     file_outputcsv = f"data_{tag}_{pdb}.csv"
-    df["KEY"] = 'info_SG:{(N),(O)}:{SG@1}'
+    df["KEY"] = df['info_SG:{(N),(O)}:{SG@1}']
     df.to_csv(file_outputcsv)
 
     print("Saved to", file_outputcsv)
