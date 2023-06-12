@@ -32,11 +32,11 @@ def data(args):
         df["KEY"] = df['info_CE2:CD1:CD2']
     elif filter == "PB": #peptide bond
     # split this into a data frame per row to save memory
-        geos = ['SG:{SG@1}[dis|<3.5]','SG:{(N),(O)}[dis|<3.5]','SG:{(N),(O)}:{SG@1}']
+        geos = ['C:N+1[aa|ALA]','C:CA','C:O','C:CA:N+1']
         df = gm.calculateGeometry(geos,log=0)
         print("----- filter -----")    
-        df = df.loc[(df['occ_SG:{(N),(O)}:{SG@1}'] == 1) ]
-        df["KEY"] = df['info_SG:{(N),(O)}:{SG@1}']
+        df = df.loc[(df['occ_C:CA:N+1'] == 1) ]
+        df["KEY"] = df['info_C:CA:N+1']
     
     for i, row in df.iterrows():            
         #print(row)
