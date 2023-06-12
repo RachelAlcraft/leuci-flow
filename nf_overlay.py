@@ -13,7 +13,7 @@ import bin.overlay as bo
 #be.exists(["", "5i9s", "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"])
 #bd.data(["", "exists.csv", "/home/rachel/phd/leuci-async/leuci-flow/pdbdata","small","PI"])
 #bs.slices(["", "exists.csv", "/home/rachel/phd/leuci-async/leuci-flow/pdbdata", "2d_np"])
-bo.overlay(["","/home/rachel/phd/leuci-async/leuci-flow/results","2d","small","PI"])
+#bo.overlay(["","/home/rachel/phd/leuci-async/leuci-flow/results","2d","small","PI"])
 
 
 if False:

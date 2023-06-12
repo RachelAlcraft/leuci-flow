@@ -6,7 +6,8 @@ import numpy as np
 from leuci_map import mapplothelp as mph
 from leuci_xyz import matrix3d as d3
 
-samples,width,depth_samples = 50,10,10 
+import config as cfg
+samples,width,depth_samples = cfg.samples,cfg.width,cfg.depth_samples
 
 def overlay(args):
  

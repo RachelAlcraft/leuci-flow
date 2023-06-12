@@ -2,6 +2,9 @@
 
 This is assuming use of linux or WSL in windows
 
+
+
+
 ## Create the environment by calling:
 ```
 python3 -m venv .venv
