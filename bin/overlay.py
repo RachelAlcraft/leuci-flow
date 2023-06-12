@@ -13,11 +13,12 @@ def overlay(args):
     dir = args[1]
     dims = args[2]
     tag = args[3]
-    paths = glob.glob(f"{dir}/{dims}_matrices_*.npy")
-    print(dir,dims,tag)
+    filter = args[4]
+    paths = glob.glob(f"{dir}/{dims}_matrices_*_{tag}_{filter}.npy")
+    print(dir,dims,tag,filter)
     
-    outdir = f"image_overlay_{dims}_{tag}.txt"
-    outdirnp = f"image_overlay_{dims}_{tag}"
+    outdir = f"image_overlay_{dims}_{tag}_{filter}.txt"
+    outdirnp = f"image_overlay_{dims}_{tag}_{filter}"
 
     np_mat = np.array([0])
 
@@ -32,7 +33,7 @@ def overlay(args):
                     np_mat += a
                 f.write(p + "\n")
     np.save(outdirnp,np_mat)
-    filename = f"image_overlay_{dims}_{tag}.html"
+    filename = f"image_overlay_{dims}_{tag}_{filter}.html"
     mplot = mph.MapPlotHelp(filename)                
     np_d3 = d3.Matrix3d(1,1,1)
     np_d3.set_from_np(np_mat)

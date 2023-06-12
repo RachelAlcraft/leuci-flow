@@ -1,12 +1,17 @@
 #!/usr/bin/env nextflow
 
-params.set_tag = "em"
-params.pdb_file = './inputs/set_tag_em.csv'
+params.set_tag = "small"
+params.filter = "PI"
+params.pdb_file = './inputs/set_tag_small.csv'
 
-params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
+//params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
+params.pdbdir = "./pdbdata"
 //params.pdbdir = "/home/ralcraft/phd/leuci-flow/pdbdata"
 
 params.outdir = "results"
+params.outcsv = "results_csv"
+params.outnpy = "results_npy"
+params.outhtml = "results_html"
 
 process EXISTS {        
     input:
@@ -22,7 +27,7 @@ process EXISTS {
 }
 
 process DATA {        
-    publishDir params.outdir, mode:'copy'
+    publishDir params.outcsv, mode:'copy'
     input:
     path pdb_exists
          
@@ -31,12 +36,12 @@ process DATA {
          
     script:    
     """
-    data.py $pdb_exists $params.pdbdir $params.set_tag
+    data.py $pdb_exists $params.pdbdir $params.set_tag $params.filter
     """    
 }
 
 process SLICES2D {    
-    publishDir params.outdir, mode:'copy'
+    publishDir params.outnpy, mode:'copy'
     input:
     path pdb_csv
          
@@ -45,12 +50,12 @@ process SLICES2D {
          
     script:    
     """
-    slices.py $pdb_csv $params.pdbdir 2d_np $params.set_tag
+    slices.py $pdb_csv $params.pdbdir 2d_np $params.set_tag $params.filter
     """    
 } 
 
 process SLICES3D {    
-    publishDir params.outdir, mode:'copy'
+    publishDir params.outnpy, mode:'copy'
     input:
     path pdb_csv
          
@@ -59,7 +64,7 @@ process SLICES3D {
          
     script:    
     """
-    slices.py $pdb_csv $params.pdbdir 3d_np $params.set_tag
+    slices.py $pdb_csv $params.pdbdir 3d_np $params.set_tag $params.filter
     """    
 }
 
@@ -74,7 +79,7 @@ process OVERLAY2D{
      
     script:     
     """     
-    overlay.py $mat_dir 2d $params.set_tag
+    overlay.py $mat_dir 2d $params.set_tag $params.filter
     """
 }
 
@@ -89,12 +94,12 @@ process OVERLAY3D{
      
     script:     
     """     
-    overlay.py $mat_dir 3d $params.set_tag
+    overlay.py $mat_dir 3d $params.set_tag $params.filter
     """
 }
 
 process IMAGES2D {    
-    publishDir params.outdir, mode:'copy'
+    publishDir params.outhtml, mode:'copy'
     input:
     path pdb_csv
          
@@ -103,12 +108,12 @@ process IMAGES2D {
          
     script:    
     """
-    slices.py $pdb_csv $params.pdbdir 2d_im $params.set_tag
+    slices.py $pdb_csv $params.pdbdir 2d_im $params.set_tag $params.filter
     """    
 }
 
 process IMAGES2D_NAY {    
-    publishDir params.outdir, mode:'copy'
+    publishDir params.outhtml, mode:'copy'
     input:
     path pdb_csv
          
@@ -117,12 +122,12 @@ process IMAGES2D_NAY {
          
     script:    
     """
-    slices.py $pdb_csv $params.pdbdir 2d_im_nay $params.set_tag
+    slices.py $pdb_csv $params.pdbdir 2d_im_nay $params.set_tag $params.filter
     """    
 }
 
 process IMAGES3D {    
-    publishDir params.outdir, mode:'copy'
+    publishDir params.outhtml, mode:'copy'
     input:
     path pdb_csv
          
@@ -131,7 +136,7 @@ process IMAGES3D {
          
     script:    
     """
-    slices.py $pdb_csv $params.pdbdir 3d_im $params.set_tag
+    slices.py $pdb_csv $params.pdbdir 3d_im $params.set_tag $params.filter
     """    
 }
 
@@ -143,12 +148,14 @@ workflow {
                 .fromPath(params.pdb_file) \
                 | splitCsv(header:true,sep:",") \
                 | map{row->tuple(row.pdbs)}                     
-    pdbs_ch = EXISTS(pdbs0_ch.flatten())
-    data_ch = DATA(pdbs_ch.flatten())    
     
-    mat_ch = Channel.fromPath(params.outdir)
+    pdbs_ch = EXISTS(pdbs0_ch.flatten())
+    
+    //data_ch = DATA(pdbs_ch.flatten()).flatten()
+    
+    //mat_ch = Channel.fromPath(params.outnpy)
 
-    slices2_ch = SLICES2D(data_ch)                
+    //slices2_ch = SLICES2D(data_ch)
     //OVERLAY2D(slices2_ch.collect().flatten(),mat_ch)
                         
     //slices3_ch = SLICES3D(data_ch)

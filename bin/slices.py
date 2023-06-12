@@ -21,6 +21,7 @@ def slices(args):
     PDBDIR = f"{args[2]}/"
     d2or3 = args[3]    # possible modes are: 2d_np, 3d_np, 2d_im, 3d_im, 2d_im_nay
     tag = args[4]
+    filter = args[5]
     df = pd.read_csv(pdb_path)            
     print(df)
     mman.MapsManager().set_dir(PDBDIR)
@@ -47,15 +48,17 @@ def slices(args):
         lin_str = lins[0]+":"+lins[2]+"@"+lins[3]+".A"
         pla_str = plas[0]+":"+plas[2]+"@"+plas[3]+".A"
         
-        coords_list.append((pdb,cen_str,lin_str,pla_str,atoms))
-        print("Added",pdb,cen_str,lin_str,pla_str,atoms)  
+        #coords_list.append((pdb,cen_str,lin_str,pla_str,atoms))
+        #print("Added",pdb,cen_str,lin_str,pla_str,atoms)  
 
-        print(coords_list)
+        #print(coords_list)
 
         interpolation = "linear"    
         
         count = 0
-        for pdb,cen,lin,pla,atoms in coords_list:
+        if True:
+            pdb,cen,lin,pla,atoms = pdb,cen_str,lin_str,pla_str,atoms
+        #for pdb,cen,lin,pla,atoms in coords_list:
             count += 1
             print(count, "/", len(coords_list),pdb,cen,lin,pla)
             
@@ -72,26 +75,26 @@ def slices(args):
                     vals2d = mf.get_slice(cc,ll,pp,width,samples,interpolation,deriv=0,ret_type="3d")
                     if d2or3 == "2d_np":
                         # 2d plot (s)
-                        filename = f"2d_matrices_{pdb}_{count}_{tag}"
+                        filename = f"2d_matrices_{pdb}_{count}_{tag}_{filter}"
                         np.save(filename,vals2d.get_as_np())
                     elif d2or3 == "2d_im":                                                                        
-                        filename = f"2d_image_{pdb}_{count}_{tag}.html"            
+                        filename = f"2d_image_{pdb}_{count}_{tag}_{filter}.html"            
                         mplot = mph.MapPlotHelp(filename)                                                                
                         mplot.make_plot_slice_2d(vals2d,min_percent=0.9,max_percent=0.9,samples=samples,width=width,title=title_key)
                     elif d2or3 == "2d_im_nay":
                         print("fetching neighbours...")
                         naybs = mf.get_slice_neighbours(cc,ll,pp,width,samples,[0,0.5],log_level=1)                        
                         print("...fetched neighbours")
-                        filename = f"2d_image_{pdb}_{count}_{tag}_nay.html"            
+                        filename = f"2d_image_{pdb}_{count}_{tag}_{filter}_nay.html"            
                         mplot = mph.MapPlotHelp(filename)                                                                
                         mplot.make_plot_slice_2d(vals2d,min_percent=0.9,max_percent=0.9,samples=samples,width=width,title=title_key,naybs=naybs)                        
                 elif "3d" in d2or3:
                     vals3d,coords = mf.get_slice(cc,ll,pp,width,samples,interpolation,deriv=0,depth_samples=depth_samples,ret_type="3d")                                
                     if d2or3 == "3d_np":
-                        filename3 = f"3d_matrices_{pdb}_{count}_{tag}"                                                                        
+                        filename3 = f"3d_matrices_{pdb}_{count}_{tag}_{filter}"                                                                        
                         np.save(filename3,vals3d.get_as_np())
                     elif d2or3 == "3d_im":
-                        filename = f"3d_image_{pdb}_{count}_{tag}.html"            
+                        filename = f"3d_image_{pdb}_{count}_{tag}_{filter}.html"            
                         mplot = mph.MapPlotHelp(filename)                                                                
                         mplot.make_plot_slice_3d(vals3d,min_percent=0.9,max_percent=0.9,title=title_key)        
             

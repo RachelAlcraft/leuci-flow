@@ -168,4 +168,5 @@ pdbdata/*.ccp4*
 results/*.*
 work/*.*
 work/*
-results_save/*
+results_*/*
+data_small_PI_4nir_3.csv

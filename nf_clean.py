@@ -7,19 +7,24 @@ This file can test the steps in nextflow in a debuggable way
 import os
 import shutil
 
-try:
-    os.mkdir("results")
-    os.mkdir("work")
-except:
-    pass
 
+dirs = ["results","results_csv","results_html","results_npy","work"]
 
-print("Cleaning work...")
-shutil.rmtree("work")
-os.mkdir("work")
+make,clean = True,True
 
-print("Cleaning results...")
-shutil.rmtree("results")
-os.mkdir("results")
+if make:
+    for dir in dirs:
+        try:
+            os.mkdir(dir)        
+        except:
+            pass
 
-print("...complete")
+if clean:
+    for dir in dirs:
+        try:
+            print("Cleaning ",dir,"...")
+            shutil.rmtree(dir)
+            os.mkdir(dir)
+        except:
+            pass        
+    
