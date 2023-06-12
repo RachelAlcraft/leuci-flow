@@ -168,3 +168,4 @@ pdbdata/*.ccp4*
 results/*.*
 work/*.*
 work/*
+results_save/*

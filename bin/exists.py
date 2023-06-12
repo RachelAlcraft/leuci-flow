@@ -18,13 +18,22 @@ def exists(args):
     filename = f"exists.csv"
     print(pdb,filename)
 
-    mman.MapsManager().set_dir(PDBDIR)    
-    pla = pl.PdbLoader(pdb,PDBDIR,cif=False)    
-    po = pla.load_pdb()        
-    ml = mman.MapsManager().get_or_create(pdb,file=1,header=1,values=1)
-    if ml.success():
-        with open(filename,"w") as f:
-            f.write(pdb)        
+    try:
+
+        mman.MapsManager().set_dir(PDBDIR)    
+        pla = pl.PdbLoader(pdb,PDBDIR,cif=False)    
+        po = pla.load_pdb()        
+        ml = mman.MapsManager().get_or_create(pdb,file=0,header=0,values=0)
+        if not ml.exists_map():
+            ml = mman.MapsManager().get_or_create(pdb,file=1,header=1,values=1)
+        if ml.success():
+            with open(filename,"w") as f:
+                f.write(pdb)
+        else:
+            print("...error loading",pdb)  
+    except Exception as e:
+        print("...error loading",pdb,e)  
+
             
 #####################################################################################################                
 if __name__ == "__main__":

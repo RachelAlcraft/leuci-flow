@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
-params.set_tag = "ec"
-params.pdb_file = './pdbdata/set_tag_ec.csv'
+params.set_tag = "xray"
+params.pdb_file = './pdbdata/set_tag_xray.csv'
 
 params.pdbdir = "/home/rachel/phd/leuci-async/leuci-flow/pdbdata"
 params.outdir = "results"
@@ -142,15 +142,15 @@ workflow {
                 | splitCsv(header:true,sep:",") \
                 | map{row->tuple(row.pdbs)}                     
     pdbs_ch = EXISTS(pdbs0_ch.flatten())
-    data_ch = DATA(pdbs_ch.flatten())    
+    //data_ch = DATA(pdbs_ch.flatten())    
     
-    mat_ch = Channel.fromPath(params.outdir)
+    //mat_ch = Channel.fromPath(params.outdir)
 
     //slices2_ch = SLICES2D(data_ch)                
     //OVERLAY2D(slices2_ch.collect().flatten(),mat_ch)
                         
-    slices3_ch = SLICES3D(data_ch)
-    OVERLAY3D(slices3_ch.collect().flatten(),mat_ch)
+    //slices3_ch = SLICES3D(data_ch)
+    //OVERLAY3D(slices3_ch.collect().flatten(),mat_ch)
         
     // This is very slow but very useful
     //images2_ch = IMAGES2D_NAY(data_ch)

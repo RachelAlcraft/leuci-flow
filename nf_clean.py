@@ -7,6 +7,12 @@ This file can test the steps in nextflow in a debuggable way
 import os
 import shutil
 
+try:
+    os.mkdir("results")
+    os.mkdir("work")
+except:
+    pass
+
 
 print("Cleaning work...")
 shutil.rmtree("work")
