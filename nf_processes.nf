@@ -56,7 +56,7 @@ process DATA_ALL {
 }
 
 process SLICES2D {    
-    publishDir params.outnpy, mode:'copy'
+    //publishDir params.outnpy, mode:'copy'
     input:
     path pdb_csv
          
@@ -70,7 +70,7 @@ process SLICES2D {
 } 
 
 process SLICES3D {    
-    publishDir params.outnpy, mode:'copy'
+    //publishDir params.outnpy, mode:'copy'
     input:
     path pdb_csv
          
@@ -86,30 +86,43 @@ process SLICES3D {
 process OVERLAY2D{
     publishDir params.outdir, mode:'copy'
     input:
-    path y
-    val mat_dir
-     
+    path pdb_nps
+         
     output:
     path 'image_overlay_2d*' optional true
      
     script:     
     """     
-    overlay.py $mat_dir 2d $params.set_tag $params.filter
+    overlay.py 2d $params.set_tag $params.filter $pdb_nps
     """
 }
 
 process OVERLAY3D{
     publishDir params.outdir, mode:'copy'
     input:
-    path y
-    val mat_dir
-     
+    path pdb_nps
+         
     output:
     path 'image_overlay_3d*' optional true
      
     script:     
     """     
-    overlay.py $mat_dir 3d $params.set_tag $params.filter
+    overlay.py 3d $params.set_tag $params.filter $pdb_nps
+    """
+}
+
+process IMAGE_REG_2D{
+    publishDir params.outdir, mode:'copy'
+    input:
+    path all_csv
+    path pdb_nps
+         
+    output:
+    path 'image_reg_2d*' optional true
+     
+    script:     
+    """     
+    registration.py 2d $params.set_tag $params.filter $all_csv $pdb_nps
     """
 }
 
@@ -157,31 +170,3 @@ process IMAGES3D {
 
 
 
-workflow {
-    
-    pdbs0_ch = Channel
-                .fromPath(params.pdb_file) \
-                | splitCsv(header:true,sep:",") \
-                | map{row->tuple(row.pdbs)}                     
-    
-    pdbs_ch = EXISTS(pdbs0_ch.flatten())
-    
-    data_ch = DATA(pdbs_ch.flatten())
-    
-    mat_ch = Channel.fromPath(params.outnpy)
-
-    //slices2_ch = SLICES2D(data_ch)
-    //OVERLAY2D(slices2_ch.collect().flatten(),mat_ch)
-                        
-    //slices3_ch = SLICES3D(data_ch)
-    //OVERLAY3D(slices3_ch.collect().flatten(),mat_ch)
-        
-    // This is very slow but very useful
-    //images2_ch = IMAGES2D_NAY(data_ch)
-                
-    // Optional but unlikely - neighbours better and 3d for every image just too much data
-    //images2_ch = IMAGES2D(data_ch)
-    //images3_ch = IMAGES3D(data_ch)        
-    
-    
-}

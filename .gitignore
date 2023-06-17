@@ -170,3 +170,5 @@ work/*.*
 work/*
 results_*/*
 data_small_PI_4nir_3.csv
+*.npy
+*.html

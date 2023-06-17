@@ -6,10 +6,17 @@ import numpy as np
 from leuci_map import mapplothelp as mph
 from leuci_xyz import matrix3d as d3
 
+import sys
+from matplotlib import pyplot as plt
+import numpy as np
+from skimage import data, util, transform, feature, measure, filters, metrics
+import matplotlib
+matplotlib.use('Agg')
+
 import config as cfg
 samples,width,depth_samples = cfg.samples,cfg.width,cfg.depth_samples
 
-def overlay(args):
+def reg_linear(args):
      
     dims = args[1]
     tag = args[2]
@@ -47,8 +54,9 @@ def overlay(args):
         mplot.make_plot_slice_3d(np_d3,min_percent=0.9,max_percent=0.9,title="overlay 3d")        
 #####################################################################################################                
 if __name__ == "__main__":
-    overlay(sys.argv)  
+    reg_linear(sys.argv)  
 
 
         
+
 

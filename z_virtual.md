@@ -2,7 +2,9 @@
 
 ## Azure virtual machine
 leuci-flow on azure
-```
+
+``` 
+chmod 400 ~/.ssh/rae-flow.pem
 ssh -i ~/.ssh/rae-flow.pem ralcraft@52.157.153.72
 ```
 
@@ -16,9 +18,7 @@ ssh -i ~/.ssh/rae-flow.pem ralcraft@52.157.153.72
 •   go to your github website login page
 •   In your Settings/SSH and GPG keys, create one and paste it in
 
-```
-git clone git@github.com:RachelAlcraft/leuci-flow.git
-```
+
 
 ## install python
 sudo apt-get update
@@ -30,6 +30,10 @@ sudo apt-get update
 sudo apt install default-jdk
 java -version
 
+```
+git clone git@github.com:RachelAlcraft/leuci-flow.git
+cd leuci-flow
 python nf_clean.py
 git checkout -- .
 git pull
+```

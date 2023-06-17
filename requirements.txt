@@ -9,3 +9,6 @@ leuci-xyz
 leuci-geo
 leuci-pol
 leuci-map
+scikit-image
+matplotlib
+seaborn

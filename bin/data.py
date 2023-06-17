@@ -30,9 +30,17 @@ def data(args):
         print("----- filter -----")    
         df = df.loc[(df['occ_CE2:CD1:CD2'] == 1) ]
         df["KEY"] = df['info_CE2:CD1:CD2']
+    elif filter == "TAU": #pi electrons around tyrosine
+        geos = ['CA:N[aa|CYS]','CA:C','CA:N:C']
+        #geos = ['CA:N','CA:C','CA:N:C']
+        df = gm.calculateGeometry(geos,log=0)
+        print("----- filter -----")    
+        df = df.loc[(df['occ_CA:N:C'] == 1) ]
+        df["KEY"] = df['info_CA:N:C']
     elif filter == "PB": #peptide bond
     # split this into a data frame per row to save memory
-        geos = ['C:N+1[aa|ALA]','C:CA','C:O','C:CA:N+1']
+        geos = ['C:N+1[aa|CYS]','C:CA','C:O','C:CA:N+1']
+        #geos = ['C:N+1','C:CA','C:O','C:CA:N+1']
         df = gm.calculateGeometry(geos,log=0)
         print("----- filter -----")    
         df = df.loc[(df['occ_C:CA:N+1'] == 1) ]
@@ -41,11 +49,12 @@ def data(args):
     for i, row in df.iterrows():            
         #print(row)
         row_df = pd.DataFrame([row])
+        ky = row["KEY"]
         row_df.columns = df.columns
         print("-----------------")
         print(row_df)
         print("-----------------")
-        file_outputcsv = f"data_{tag}_{filter}_{pdb}_{i}.csv"        
+        file_outputcsv = f"data_{tag}_{filter}_{pdb}_{ky}.csv"        
         row_df.to_csv(file_outputcsv,columns=df.columns,index=False)
         print("Saved to", file_outputcsv)
 
