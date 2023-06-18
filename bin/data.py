@@ -31,7 +31,7 @@ def data(args):
         df = df.loc[(df['occ_CE2:CD1:CD2'] == 1) ]
         df["KEY"] = df['info_CE2:CD1:CD2']
     elif filter == "TAU": #pi electrons around tyrosine
-        geos = ['CA:N[aa|CYS]','CA:C','CA:N:C']
+        geos = ['CA:N','CA:C','CA:N:C']
         #geos = ['CA:N','CA:C','CA:N:C']
         df = gm.calculateGeometry(geos,log=0)
         print("----- filter -----")    

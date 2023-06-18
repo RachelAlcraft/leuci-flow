@@ -21,6 +21,7 @@ include { SLICES2D } from './nf_processes'
 include { SLICES3D } from './nf_processes'
 include { OVERLAY2D } from './nf_processes'
 include { IMAGE_REG_2D } from './nf_processes'
+include { ELASTIC_REG_2D } from './nf_processes'
 include { OVERLAY3D } from './nf_processes'
 include { IMAGES2D } from './nf_processes'
 include { IMAGES2D_NAY } from './nf_processes'
@@ -41,7 +42,8 @@ workflow {
         
     slices2_ch = SLICES2D(data_ch)
     OVERLAY2D(slices2_ch.flatten().collect())
-    IMAGE_REG_2D(all_csv_ch,slices2_ch.flatten().collect())
+    //IMAGE_REG_2D(all_csv_ch,slices2_ch.flatten().collect())
+    ELASTIC_REG_2D(all_csv_ch,slices2_ch.flatten().collect())
                         
     //slices3_ch = SLICES3D(data_ch)
     //OVERLAY3D(slices3_ch.flatten().collect())

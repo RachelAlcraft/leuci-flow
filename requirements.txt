@@ -12,3 +12,4 @@ leuci-map
 scikit-image
 matplotlib
 seaborn
+pyelastix

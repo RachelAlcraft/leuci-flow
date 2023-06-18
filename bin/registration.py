@@ -131,14 +131,15 @@ def registration(args):
         img = orig_img_list[i]
         harris_img = feature.corner_harris(img)
         print("----- CORNERS -----")        
-        corners = feature.corner_peaks(harris_img, threshold_rel=0.001, min_distance=min_dist)
-        #orig_corners_list.append(corners)
+        corners = feature.corner_peaks(harris_img, threshold_rel=0.001, min_distance=min_dist)        
         print(corners)                
         # make corners up
-        fake_corners=np.array([[25,25],[25,28],[30,30]])
-        orig_corners_list.append(fake_corners)
-        #all_data_array[i].append(fake_corners)
-        #print(fake_corners)
+        if filter == "DATA":
+            orig_corners_list.append(corners)
+        else:
+            fake_corners=np.array([[25,25],[25,28],[24,26]])        
+            orig_corners_list.append(fake_corners)
+        
         
     
     
@@ -163,9 +164,8 @@ def registration(args):
     for i in range(len(orig_img_list)):
         img1 = orig_img_list[i]
         coords1 = orig_corners_list[i]
-        mc = match_locations(img0, img1, coords0, coords1, min_dist)
-        #matching_corners.append(mc)
-        orig_matching_corners.append(mc)
+        mc = match_locations(img0, img1, coords0, coords1, min_dist)        
+        orig_matching_corners.append(mc)        
         #for mmc in mc:
         #    print(type(mmc),mmc.shape,mmc,)
         
@@ -216,6 +216,7 @@ def registration(args):
         im = orig_img_list[i]
         trfm = orig_trfm_list[i]
         coords = orig_corners_list[i]
+        mcoords = orig_matching_corners[i]
         
         if not math.isnan(trfm.max()):
             try:
@@ -225,7 +226,8 @@ def registration(args):
                 if filter != "DATA":
                     rep.addContours(im[:, :, 0],overlay=True,colourbar=False)
                 
-                rep.addPoints2d([coords],overlay=False,hue="limegreen")
+                rep.addPoints2d([coords],overlay=True,hue="limegreen")
+                rep.addPoints2d([mcoords],overlay=False,hue="cyan")
                 rep.addSurface(im)        
                 rep.addSurface(tr_im)
                 #good_images.append(all_data_array[i])

@@ -126,6 +126,21 @@ process IMAGE_REG_2D{
     """
 }
 
+process ELASTIC_REG_2D{
+    publishDir params.outdir, mode:'copy'
+    input:
+    path all_csv
+    path pdb_nps
+         
+    output:
+    path 'elastic_reg_2d*' optional true
+     
+    script:     
+    """     
+    reg_elastic.py 2d $params.set_tag $params.filter $all_csv $pdb_nps
+    """
+}
+
 process IMAGES2D {    
     publishDir params.outhtml, mode:'copy'
     input:
