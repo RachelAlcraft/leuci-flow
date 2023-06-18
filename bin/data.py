@@ -37,6 +37,13 @@ def data(args):
         print("----- filter -----")    
         df = df.loc[(df['occ_CA:N:C'] == 1) ]
         df["KEY"] = df['info_CA:N:C']
+    elif filter == "DATA": #pi electrons around tyrosine
+        geos = ['CA:N','CA:C','CA:N:C']
+        #geos = ['CA:N','CA:C','CA:N:C']
+        df = gm.calculateGeometry(geos,log=0)
+        print("----- filter -----")    
+        df = df.loc[(df['occ_CA:N:C'] == 1) ]
+        df["KEY"] = df['info_CA:N:C']
     elif filter == "PB": #peptide bond
     # split this into a data frame per row to save memory
         geos = ['C:N+1[aa|CYS]','C:CA','C:O','C:CA:N+1']

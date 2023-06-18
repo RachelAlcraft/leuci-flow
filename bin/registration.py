@@ -24,6 +24,24 @@ def match_locations(img0, img1, coords0, coords1, radius=5, sigma=3):
 
     return np.array(match_list)
 
+def get_moon_data():
+    ############################################################################
+# Data generation
+# For this example, we generate a list of slightly tilted noisy images.
+
+    img = data.moon()
+
+    angle_list = [0, 5, 6, -2, 3, -4]
+    center_list = [(0, 0), (10, 10), (5, 12), (11, 21), (21, 17), (43, 15)]
+
+    img_list = [transform.rotate(img, angle=a, center=c)[40:240, 50:350]
+                for a, c in zip(angle_list, center_list)]
+    
+    img_list = [util.random_noise(filters.gaussian(im, 1.1), var=5e-4, rng=seed)
+                for seed, im in enumerate(img_list)]
+    
+    return img_list
+
 
 def registration(args):
 
@@ -42,43 +60,58 @@ def registration(args):
     #
     # For this example, we generate a list of slightly tilted noisy images.
         
-    all_data_array = []
-    
-    print(csv_path)
-    #img_list = []
-    loaded = False
+    #all_data_array = []
+    orig_img_list = []
+    orig_img_titles = []
+    orig_corners_list = []
     super_a = None
-    for p in paths:    
-        print(p)
-        p = p.replace("\\","")
-        p = p.replace("\"","")
-        p = p.replace("\"","")
-        print(p)
-        nams = p.split('_')
-        ttl = nams[3]        
-        with open(p, 'rb') as fnp:
-            a = np.load(fnp)
+    loaded = False
+    if filter == "DATA":
+        orig_img_list = get_moon_data()
+        for im in orig_img_list:
+            orig_img_titles.append("moon")
             if not loaded:
-                super_a = a
+                super_a = im.copy()
                 loaded = True
             else:
-                super_a += a
-            #img_list.append(a)
-            all_data_array.append([ttl,a])
+                super_a += im.copy()
+    else:
+        print(csv_path)
+        #img_list = []
+        
+        
+        for p in paths:    
+            print(p)
+            p = p.replace("\\","")
+            p = p.replace("\"","")
+            p = p.replace("\"","")
+            print(p)
+            nams = p.split('_')
+            ttl = nams[3]        
+            with open(p, 'rb') as fnp:
+                a = np.load(fnp)
+                if not loaded:
+                    super_a = a.copy()
+                    loaded = True
+                else:
+                    super_a += a.copy()
+                orig_img_titles.append(ttl)
+                orig_img_list.append(a)
+                
                 
     #ref_img = img_list[0].copy()
-    ref_img = all_data_array[0][1].copy()
+    ref_img = orig_img_list[0].copy()
+    
     
     maxmax = -100
     minmin = 100
-    for i in range(0,len(all_data_array)):
-        imm = all_data_array[i][1]
+    for imm in orig_img_list:        
         maxmax = max(maxmax,imm.max())
         minmin = min(minmin,imm.min())
 
     data_range = maxmax-minmin
 
-    psnr_ref = metrics.peak_signal_noise_ratio(ref_img, all_data_array[1][1],data_range=data_range)
+    psnr_ref = metrics.peak_signal_noise_ratio(ref_img, orig_img_list[0],data_range=data_range)
 
     ############################################################################
     # Image registration
@@ -94,15 +127,18 @@ def registration(args):
 
     min_dist = 5
     #corner_list = []
-    for i in range(len(all_data_array)):
-        img = all_data_array[i][1]
+    for i in range(len(orig_img_list)):
+        img = orig_img_list[i]
         harris_img = feature.corner_harris(img)
         print("----- CORNERS -----")        
         corners = feature.corner_peaks(harris_img, threshold_rel=0.001, min_distance=min_dist)
-        print(corners)        
-        #all_data_array[i].append(corners)
+        #orig_corners_list.append(corners)
+        print(corners)                
         # make corners up
-        all_data_array[i].append([[25,25],[25,28],[30,30]])
+        fake_corners=np.array([[25,25],[25,28],[30,30]])
+        orig_corners_list.append(fake_corners)
+        #all_data_array[i].append(fake_corners)
+        #print(fake_corners)
         
     
     
@@ -114,22 +150,22 @@ def registration(args):
     # references. Then the detected points on the other images are
     # matched to the reference points.
 
-    img0 = all_data_array[0][1]
-    coords0 = all_data_array[0][2]
-    for i in range(len(all_data_array)):        
-        coords1 = all_data_array[i][2]
-        if len(coords1)> 1:
-            coords0 = all_data_array[i][2]
-            img0 = all_data_array[0][1]
-            break
+    img0 = orig_img_list[0]
+    coords0 = orig_corners_list[0]
+    #for i in range(len(orig_img_list)):        
+    #    coords1 = orig_corners_list[i]
+    #    if len(coords1)> 1:
+    #        coords0 = all_data_array[i][2]
+    #        img0 = all_data_array[0][1]
+    #        break
     
-    #matching_corners = []
-    for i in range(len(all_data_array)):
-        img1 = all_data_array[i][1]
-        coords1 = all_data_array[i][2]
+    orig_matching_corners = []
+    for i in range(len(orig_img_list)):
+        img1 = orig_img_list[i]
+        coords1 = orig_corners_list[i]
         mc = match_locations(img0, img1, coords0, coords1, min_dist)
         #matching_corners.append(mc)
-        all_data_array[i].append(mc)
+        orig_matching_corners.append(mc)
         #for mmc in mc:
         #    print(type(mmc),mmc.shape,mmc,)
         
@@ -138,23 +174,27 @@ def registration(args):
     # relative affine transformations can be estimated using the RANSAC method.
     src = np.array(coords0)
         
-    #trfm_list = []
+    orig_trfm_list = []
     count = 0
     #for dst in matching_corners:
-    for i in range(len(all_data_array)):
-        dst = np.array(all_data_array[i][3])
-        try:
-            rnsc = measure.ransac((dst, src),transform.EuclideanTransform, min_samples=len(coords0),residual_threshold=2, max_trials=5000)
+    for i in range(len(orig_img_list)):
+        print(i,"ransac")
+        #dst = np.array(orig_matching_corners[i])
+        dst = orig_matching_corners[i]
+        try:                        
+            rnsc = measure.ransac((dst, src),transform.EuclideanTransform, min_samples=2,residual_threshold=2, max_trials=100)                
             if rnsc[0] is not None:
-                all_data_array[i].append(rnsc[0].params)
+                print("...",i,"ransac",rnsc[0])
+                orig_trfm_list.append(rnsc[0].params)
                 #trfm_list.append(rnsc[0].params)            
             else:
-                all_data_array[i].append(np.array([float("Nan")]))
+                print("...",i,"ransac none")
+                orig_trfm_list.append(np.array([float("Nan")]))
                 #trfm_list.append(np.array([float("Nan")]))
         except Exception as e:
             #trfm_list.append(np.array([float("Nan")]))
-            print(e)
-            all_data_array[i].append(np.array([float("Nan")]))
+            print("...",i,e,"ransac")
+            orig_trfm_list.append(np.array([float("Nan")]))
         
         count += 1
 
@@ -162,7 +202,7 @@ def registration(args):
     #fig, ax_list = plt.subplots(len(img_list), 2, figsize=(9,2*len(img_list)), sharex=True, sharey=True)
     #im_zipped = zip(img_list, trfm_list)
 
-    good_images = []
+    bad_titles = []
     bad_images = []
 
     # Set up the output report
@@ -172,26 +212,30 @@ def registration(args):
     rep.addBoxComment("Surface tilted")
     
     #for idx, (im, trfm) in enumerate(im_zipped):
-    for i in range(len(all_data_array)):
-        im = all_data_array[i][1]
-        trfm = all_data_array[i][4]
-        coords = all_data_array[i][2]
+    for i in range(len(orig_img_list)):
+        im = orig_img_list[i]
+        trfm = orig_trfm_list[i]
+        coords = orig_corners_list[i]
         
         if not math.isnan(trfm.max()):
             try:
                 tr_im = transform.warp(im, trfm)
                 print(i,len(tr_im[0]))             
-                rep.addLineComment(all_data_array[i][0])
-                rep.addContours(im[:, :, 0],overlay=True,colourbar=False)
+                rep.addLineComment(orig_img_titles[i])
+                if filter != "DATA":
+                    rep.addContours(im[:, :, 0],overlay=True,colourbar=False)
+                
                 rep.addPoints2d([coords],overlay=False,hue="limegreen")
                 rep.addSurface(im)        
                 rep.addSurface(tr_im)
-                good_images.append(all_data_array[i])
-            except:
-                print("error tilting",i)
-                bad_images.append(all_data_array[i])
+                #good_images.append(all_data_array[i])
+            except Exception as e:
+                print("error tilting",i,e)
+                bad_images.append(im)
+                bad_titles.append(orig_img_titles[i])
         else:
-            bad_images.append(all_data_array[i])
+            bad_images.append(im)
+            bad_titles.append(orig_img_titles[i])
         
 
     ############################################################################
@@ -206,7 +250,10 @@ def registration(args):
     # A global transformation is defined to move the reference image in the
     # global domain image via a simple translation:
     margin = 50
-    height, width,depth = ref_img.shape
+    try:
+        height, width,depth = ref_img.shape
+    except:
+        height, width = ref_img.shape
     out_shape = height + 2 * margin, width + 2 * margin
     glob_trfm = np.eye(3)
     glob_trfm[:2, 2] = -margin, -margin
@@ -217,14 +264,20 @@ def registration(args):
     # relative transformations:
     rep.addLineComment("Superposition")
     rep.changeColNumber(3)
-    if len(good_images) > 0:
+    if len(bad_images) != len(orig_img_list):
         global_img_list = []
-        for i in range(len(good_images)):
-            im = good_images[i][1]
-            trfm = good_images[i][4]
-            global_img_list.append(transform.warp(img, trfm.dot(glob_trfm),
+        for i in range(len(orig_img_list)):
+            img = orig_img_list[i]
+            trfm = orig_trfm_list[i]
+            try:
+                warped = transform.warp(img, trfm.dot(glob_trfm),
                                         output_shape=out_shape,
-                                        mode="constant", cval=np.nan))
+                                        mode="constant", cval=np.nan)
+            
+                global_img_list.append(warped)
+            
+            except Exception as e:
+                print(e)
                         
 
         
@@ -239,15 +292,19 @@ def registration(args):
             data_range=data_range)
 
         rep.addSurface(composite_img, title="image registration")
-    rep.addBoxComment("")
+    rep.addBoxComment("")    
+    #if filter == "DATA":
+    #    rep.addBoxComment("")    
+    #else:
     rep.addSurface(super_a, title="simple superposition")
+    
         
     
     rep.changeColNumber(3)
     rep.addLineComment("Bad images")
-    for im in bad_images:
-        ikm = im[1]
-        tl = im[0]
+    for i in range(len(bad_images)):
+        ikm = bad_images[i]
+        tl = bad_titles[i]
         rep.addSurface(ikm,title=tl)
     rep.addBoxComment("")
     rep.addBoxComment("")
