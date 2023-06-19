@@ -42,7 +42,7 @@ workflow {
         
     slices2_ch = SLICES2D(data_ch)
     OVERLAY2D(slices2_ch.flatten().collect())
-    //IMAGE_REG_2D(all_csv_ch,slices2_ch.flatten().collect())
+    IMAGE_REG_2D(all_csv_ch,slices2_ch.flatten().collect())
     ELASTIC_REG_2D(all_csv_ch,slices2_ch.flatten().collect())
                         
     //slices3_ch = SLICES3D(data_ch)

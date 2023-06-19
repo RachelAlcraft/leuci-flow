@@ -96,11 +96,10 @@ def registration(args):
         im = orig_img_list[i]
         def_img = img_deformed[i]                
         rep.addLineComment(orig_img_titles[i])
-        if filter != "DATA":
-            rep.addContours(im[:, :, 0],overlay=True,colourbar=False)
-                        
-        rep.addSurface(im)        
-        rep.addSurface(def_img)
+        
+        rep.addContours(im[:, :, 0],overlay=False,colourbar=False,title="orig")                        
+        rep.addSurface(im,title="orig")
+        rep.addSurface(def_img,title="deformed")
 
         if not loaded:
             super_a = im.copy()
